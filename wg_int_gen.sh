@@ -7,12 +7,13 @@ for ((i=0; i<$second_octet; i++))
 do
     for((j=0; j<$interfaces; j++))
     do
-        portnum=$((51822+$j))
+        portnum=$((51822+$(($interfaces*$i))+$j))
         while [ -n "$(ss -laun | grep $portnum)" ]
         do
             echo "$portnum"
             echo "not empty"
-            let portnum+=1
+            let portnum+=$(($interfaces*$i))+1
+            echo "$portnum"
         done
         touch 10.$j.$i.1_32_$portnum.conf
         echo "[Interface]
@@ -22,6 +23,6 @@ do
 
 [Peer]
         PublicKey = 74dQl5ZFc4FX7FQKF5W7Ob/C0tIlr$j\BW5mXMKzJ9lwA=
-        AllowedIPs = 10.$j.$i.2/32" > 10.$j.$i.1_32_$((51822+$(($interfaces*$i))+$j)).conf
+        AllowedIPs = 10.$j.$i.2/32" > 10.$j.$i.1_32_$portnum.conf
     done
 done
